@@ -3,10 +3,17 @@ function andy_addtocontent($andy_postarray) {
     $postcount = count($andy_postarray);
     $andy_posturl = get_permalink($andy_postarray[0]);
     for ($i=1; $i < $postcount; $i++) { 
-        $content = get_post_field('post_content', $andy_postarray[$i]);
-        $content = '<strong>UPDATE:</strong> Newer information can be found on this stock <a href="'.$andy_posturl.'">here</a><br/>'.$content;
-        $andy_postargs = array('ID' => $andy_postarray[$i], 'post_content' => $content);
-        wp_update_post($andy_postargs);
+        $andy_updatecheck = get_post_meta($andy_postarray[$i], 'andy_updateinfo', true);
+        if(empty($andy_updatecheck)){
+            add_post_meta($andy_postarray[$i], 'andy_updateinfo', '<strong>UPDATE:</strong> Newer information can be found on this stock <a href="'.$andy_posturl.'">here</a><br/>', true);
+            $content = get_post_field('post_content', $andy_postarray[$i]);
+            $content = get_post_meta($andy_postarray[$i], 'andy_updateinfo', true).$content;
+            $andy_postargs = array('ID' => $andy_postarray[$i], 'post_content' => $content);
+            wp_update_post($andy_postargs);
+        }
+        else {
+            update_post_meta($andy_postarray[$i], 'andy_updateinfo', '<strong>UPDATE:</strong> Newer information can be found on this stock <a href="'.$andy_posturl.'">here</a><br/>');
+        }
     }
 }
 function andy_fillpostarray($andy_asxcode) {
@@ -20,7 +27,7 @@ function andy_fillpostarray($andy_asxcode) {
 }
 function andy_postaction($new_status, $old_status, $post) {
     $andy_asxcode = get_post_meta($post->ID, 'asx_code', true);
-    if ($new_status == 'publish') {
+    if (!empty($andy_asxcode) && $new_status == 'publish') {
         $andy_postarray = andy_fillpostarray($andy_asxcode);
         andy_addtocontent($andy_postarray);
     }
