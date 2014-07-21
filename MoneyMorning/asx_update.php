@@ -20,7 +20,7 @@ function andy_fillpostarray($andy_asxcode) {
 }
 function andy_postaction($new_status, $old_status, $post) {
     $andy_asxcode = get_post_meta($post->ID, 'asx_code', true);
-    if ($andy_asxcode && $new_status = 'publish') {
+    if ($new_status == 'publish') {
         $andy_postarray = andy_fillpostarray($andy_asxcode);
         andy_addtocontent($andy_postarray);
     }
