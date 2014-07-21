@@ -5,7 +5,8 @@ function andy_addtocontent($andy_postarray) {
     for ($i=1; $i < $postcount; $i++) { 
         $content = get_post_field('post_content', $andy_postarray[$i]);
         $content = '<strong>UPDATE:</strong> Newer information can be found on this stock <a href="'.$andy_posturl.'">here</a><br/>'.$content;
-        return $content;
+        $andy_postargs = array('ID' => $andy_postarray[$i], 'post_content' => $content);
+        wp_update_post($andy_postargs);
     }
 }
 function andy_fillpostarray($andy_asxcode) {
@@ -20,7 +21,7 @@ function andy_fillpostarray($andy_asxcode) {
 function andy_postaction($new_status, $old_status, $post) {
     $andy_asxcode = get_post_meta($post->ID, 'asx_code', true);
     if ($andy_asxcode && $new_status = 'publish') {
-        andy_fillpostarray($andy_asxcode);
+        $andy_postarray = andy_fillpostarray($andy_asxcode);
         andy_addtocontent($andy_postarray);
     }
 }
