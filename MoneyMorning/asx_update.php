@@ -25,12 +25,12 @@ function andy_fillpostarray($andy_asxcode) {
     }
     return $andy_postarray;
 }
-function andy_postaction($new_status, $old_status, $post) {
+function andy_postaction() {
     $andy_asxcode = get_post_meta($post->ID, 'asx_code', true);
-    if (!empty($andy_asxcode) && $new_status == 'publish') {
+    if (in_category('7')) {
         $andy_postarray = andy_fillpostarray($andy_asxcode);
         andy_addtocontent($andy_postarray);
     }
 }
-add_action('transition_post_status', 'andy_postaction', 10, 3);
+add_action('save_post', 'andy_postaction');
 ?>
